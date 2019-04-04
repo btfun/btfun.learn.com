@@ -7,8 +7,8 @@
       <div class="menu">
         <!-- 菜单 -->
         <ul>
-          <li @click="home">设计模式</li>
-          <li @click="home">首页</li>
+          <li @click="home('design')">设计模式</li>
+          <li @click="home('write')">手写代码</li>
         </ul>
       </div>
       <div class="context ">
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import navheader from './header'
+import navheader from '../layout/header'
 
 export default {
   name: 'layout',
@@ -34,9 +34,9 @@ export default {
     }
   },
   methods:{
-    home(){
+    home(path){
       this.$router.push({
-        path:'/home'
+        path: path||'/'
       })
     }
   }

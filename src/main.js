@@ -6,7 +6,7 @@ import ElementUI from 'element-ui'
 import axios from 'axios'
 
 // medium中等, small小型, mini超小
-Vue.use(ElementUI, { size: '', zIndex: 3000 });
+Vue.use(ElementUI, { size: 'medium', zIndex: 3000 });
 Vue.prototype.$http = axios;
 
 
@@ -26,7 +26,7 @@ router.beforeEach((to, from, next) =>{
   // var token=sessionStorage.getItem('token');
   console.log('即将跳转的页面',to.path)
   next()
-   
+
 
 });
 

@@ -1,6 +1,6 @@
 // import Vue from 'vue'
 import Router from 'vue-router'
-import layout from '@/components/layout'
+import layout from '@/components/layout/layout'
 
 // Vue.use(Router)
 
@@ -12,21 +12,16 @@ export default new Router({
       path: '/',
       name: 'layout',
       component: layout,
-      redirect: '/home',
+      redirect: '/design',
       children:[
-        { path: 'home',   component: () => import('@/components/layout-home')},
-        { path: 'select', component: () => import('@/components/layout-select')},
-        { path: 'qr',     component: () => import('@/components/layout-qr')},
-        { path: 'user',   component: () => import('@/components/layout-user')},
-        { path: 'address',component: () => import('@/components/layout-address')},
+        { path: 'design',   component: () => import('@/components/manager/design-mode')},
+        { path: 'write', component: () => import('@/components/manager/write-code')},
+        // { path: 'qr',     component: () => import('@/components/manager/layout-qr')},
+        // { path: 'user',   component: () => import('@/components/manager/layout-user')},
+        // { path: 'address',component: () => import('@/components/manager/layout-address')},
 
       ]
     },
     { path: '*', redirect: '/404', hidden: true }
-    // {
-    //   path: '/itemInfo',
-    //   name: 'itemInfo',
-    //   component: resolve => require(['@/shop-union/itemInfo'],resolve)
-    // },
   ]
 })

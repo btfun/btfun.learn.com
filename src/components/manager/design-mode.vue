@@ -32,7 +32,8 @@
 </template>
 
 <script>
-import util from '../base/util'
+import util from '../../base/util'
+
 export default {
   name: 'HelloWorld',
   data () {
@@ -43,13 +44,19 @@ export default {
   },created(){
     util.changeTitle('设计模式')
 
-    this.decorator()
+    // this.decorator()//装饰者模式
+
+    // this.observer()//观察者模式
+
+    this.datalist.forEach((item,index,list)=>{
+      console.log(item,index,list)
+    })
 
   },
   methods:{
     singleton(){
       /*
-      * 单例模式的定义：保证一个类仅有一个实例，并提供一个访问它的全局访问点。
+      * 单例模式 的定义：保证一个类仅有一个实例，并提供一个访问它的全局访问点。
       * 实现的方法为先判断实例存在与否，如果存在则直接返回，
       * 如果不存在就创建了再返回，这就确保了一个类只有一个实例对象。
       */
@@ -81,7 +88,7 @@ export default {
     strategy(){
 
       /*
-      * 策略模式的定义：定义一系列的算法，把他们一个个封装起来，并且使他们可以相互替换。
+      * 策略模式 的定义：定义一系列的算法，把他们一个个封装起来，并且使他们可以相互替换。
       * 此模式让算法的变化独立于使用算法的客户.
       * 策略模式的目的：是将算法的使用和算法的实现分离开来。
       * 一个基于策略模式的程序至少由两部分组成；
@@ -108,7 +115,7 @@ export default {
     },
     proxy(){
       /*
-      *  代理模式为另一个对象提供一个替身或占位符以控制对这个对象的访问
+      *  代理模式 为另一个对象提供一个替身或占位符以控制对这个对象的访问
       *
       */
       var imgFunc = (function() {
@@ -176,6 +183,98 @@ export default {
       func = func.before(func1).after(func3);
       func();
 
+
+
+    },
+    observer(){
+      /**
+      * 观察者模式(发布-订阅模式)
+      * 定义了对象之间的一对多依赖，这样一来，当一个对象改变状态时，它的所有依赖者都会收到通知并自动更新。
+      */
+
+     //发布者
+     class Vue{
+       constructor(options){
+         this.options=options;
+         this.$data=options.data;
+         this.$el=document.querySelector(options.el);
+         this._diretives={};//存放订阅者
+
+         this.Observer(this.$data)
+         this.Compile(this.$el)
+       }
+       //劫持函数
+       Observer(data){
+         for(let key in data){
+             this._diretives[key]=[];//空数组类型
+
+             let Val=data[key];//当前的值
+             let _this=this._diretives[key];
+             Object.defineProperty(this.$data,key,{
+               get:function(){
+                 return  Val;
+               },
+               set:function(newVal){
+                   if(newVal!=Val){
+                     Val=newVal;
+
+                     _this.forEach((watch)=>{//遍历订阅者实例
+                       watch.update();//更新试图
+                     })
+                   }
+               }
+             })
+         }
+       }
+       //解析指令
+       Compile(el){
+         let nodes=el.children;//获取子元素
+         for(let i=0; i<nodes.length; i++){
+           let node=nodes[i];//当前元素
+
+           if(node.children.length){
+             this.Compile(node); //递归查自己
+           }
+           //查找指令
+           if(node.hasAttribute('v-text')){
+             let attr=node.getAttribute('v-text')
+             // 获取属性里面的值 对号进入相应的订阅者数组
+             this._diretives[attr].push(new Watcher(node, attr, this, 'innerHTML'))
+           }
+
+           if(node.hasAttribute('v-model')){
+             let attr=node.getAttribute('v-model')
+             this._diretives[attr].push(new Watcher(node, attr, this, 'value'))
+             let _this=this;
+             //事件监听
+             node.addEventListener('input', function(){
+                   //更新视图同步数据到模型
+                   _this.$data[attr]=node.value
+             })
+
+           }
+
+         }
+       }
+
+     }
+     //订阅者
+     class Watcher{
+       constructor(el,vm, self, attr){
+           this.el=el;
+           this.vm=vm;
+           this.self=self;
+           this.attr=attr;
+
+           this.update()//初始化数据
+       }
+       //更新视图
+       update(){
+         this.el[this.attr]=this.self.$data[this.vm];
+         // div对象【innerHTML】=vue对象.data[]
+
+       }
+     }
 
 
     },
